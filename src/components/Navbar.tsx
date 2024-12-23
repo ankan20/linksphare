@@ -15,7 +15,7 @@ const Navbar = () => {
         <div className="font-bold text-2xl flex-1">
           <Link href="/" >
             <span className="inline bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 text-transparent bg-clip-text drop-shadow-lg">
-              LinkSphere🔗
+              LinkSphare🔗
             </span>
           </Link>
         </div>

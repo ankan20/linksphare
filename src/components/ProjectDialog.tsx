@@ -58,6 +58,7 @@ const ProjectDialog = ({ isDialogOpen, setIsDialogOpen }: any) => {
             if (response.status === 201) {
                 toast({
                     title: "Project Created Successfully",
+                    variant: "default",
                     description: "Your project has been created successfully.",
                   });
                 setIsDialogOpen(false);
@@ -68,9 +69,10 @@ const ProjectDialog = ({ isDialogOpen, setIsDialogOpen }: any) => {
             console.error("Error creating project:", error);
             toast({
                 title: "Error creating project",
-                description: "An error occurred while creating the project.",
+                variant: "destructive",
+                description: error.response.data.message || "An error occurred while creating the project.",
             })
-            setErrorMessage("An error occurred while creating the project.");
+            setErrorMessage(error.response.data.message || "An error occurred while creating the project.");
         } finally {
             setIsSubmitting(false);
         }

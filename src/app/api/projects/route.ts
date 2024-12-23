@@ -50,35 +50,48 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
     try {
-        // Get the authenticated user's information from Clerk
-        const { userId } = getAuth(req); // This returns the userId of the logged-in user
-
-        if (!userId) {
-            return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-        }
-
-        // Fetch the logged-in user details and their associated projects
-        const user = await prisma.user.findUnique({
-            where: { clerkUserId: userId }, // Find the user by their Clerk user ID
+      // Get the authenticated user's information from Clerk
+      const { userId } = getAuth(req);
+  
+      if (!userId) {
+        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      }
+  
+      // Fetch the logged-in user details and their associated projects
+      const user = await prisma.user.findUnique({
+        where: { clerkUserId: userId },
+        include: {
+          projects: {
             include: {
-                projects: {
-                    include: {
-                        links: true, // Include the associated links for each project
-                    },
-                },
+              links: true, // Include the associated links for each project
             },
-        });
-
-        if (!user) {
-            return NextResponse.json({ message: 'User not found' }, { status: 404 });
-        }
-
-        // Return the logged-in user details and their projects
-        return NextResponse.json({
-            user,
-        }, { status: 200 });
+          },
+        },
+      });
+  
+      if (!user) {
+        return NextResponse.json({ message: "User not found" }, { status: 404 });
+      }
+  
+      // Restructure and sort the projects array
+      const sortedProjects = [
+        ...user.projects.filter((project) => !project.done).sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()),
+        ...user.projects.filter((project) => project.done).sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()),
+      ];
+  
+      // Return the logged-in user details with the sorted projects
+      return NextResponse.json(
+        {
+          user: {
+            ...user,
+            projects: sortedProjects,
+          },
+        },
+        { status: 200 }
+      );
     } catch (error) {
-        console.error("Error fetching user and projects:", error);
-        return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+      console.error("Error fetching user and projects:", error);
+      return NextResponse.json({ message: "Internal server error" }, { status: 500 });
     }
-}
+  }
+  
