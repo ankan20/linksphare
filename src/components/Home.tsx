@@ -1,41 +1,84 @@
 "use client";
 
-import ModernButton from "@/components/ui/ModernButton";
-import { useRouter } from "next/navigation";
 import { Faqs } from "@/components/Faqs";
 import ShineButton from "./ShineButton";
+import { motion } from "framer-motion";
+import BlurIn from "./ui/blur-in";
+import SparklesText from "./ui/sparkles-text";
+import DotPattern from "./ui/dot-pattern";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { RainbowButton } from "./ui/rainbow-button";
+import AnimatedImage from "./AnimatedImage";
 
 const Home = () => {
-  const router = useRouter();
-  const handleClick = () => {
-    router.push("/dashboard");
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.3 } },
+  };
+  
+  const itemVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 },
   };
 
   return (
-    <div className="h-screen min-w-full dark:bg-black bg-white dark:bg-grid-white/[0.2] bg-grid-black/[0.2] relative flex flex-col items-center justify-center ">
-      {/* Radial gradient for the container to give a faded look */}
-      <div className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
-
-      {/* Centered Content */}
-      <div className="relative  text-center flex flex-col items-center justify-center">
-        {/* Heading */}
-        <ShineButton />
-        <h1 className=" text-4xl sm:text-7xl font-bold mb-4 py-2 dark:text-white text-black">
-          <span className="relative bg-gradient-to-r from-gray-200 to-gray-500 bg-clip-text text-transparent mask-image-gradient  ">
-            Welcome to LinkSphere
-          </span>
-        </h1>
-        {/* Description */}
-        <p className="text-lg sm:text-xl mb-6 max-w-lg leading-relaxed dark:text-white text-black">
-          LinkSphere is your ultimate platform for managing and organizing links with ease. Streamline your workflow by grouping links into intuitive projects and sharing them with teams or clients.
-        </p>
-        {/* Modern Button with custom onClick */}
-        <ModernButton label="Get Started" onClick={handleClick} />
-      </div>
-      <div className="w-[80%] sm:w-[50%] mt-16 z-20">
-        <Faqs />
+    <div>
+      <main>
+        <div className="z-0 relative min-h-screen w-full pb-40 overflow-hidden ">
+          <motion.div
+            className="relative z-10 flex flex-col items-center justify-start min-h-screen space-y-6 px-4 pt-24"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <DotPattern
+              className={cn(
+                "absolute inset-0 z-0 [mask-image:radial-gradient(50vw_circle_at_center,white,transparent)]"
+              )}
+            />
+            <ShineButton />
+            <motion.div variants={itemVariants}>
+              <BlurIn
+                word={
+                  <>
+                    Manage your links at{" "}
+                    <SparklesText className="inline" text="LinkSphare" />. 
+                    
+                  </>
+                }
+                className="font-display text-center text-4xl font-bold w-full lg:w-auto max-w-4xl mx-auto -z-10"
+                duration={1}
+              />
+            </motion.div>
+            <motion.h2
+              className="text-xl text-opacity-60 tracking-normal text-center max-w-2xl mx-auto z-10"
+              variants={itemVariants}
+            >
+              {" "}Manage your links efficiently with Linksphare. Shorten URLs, store project details, and keep track of everything in one place.
+            </motion.h2>
+            <motion.div variants={itemVariants} className="z-20">
+              <Link href="/dashboard">
+                <RainbowButton className={cn("shadow-2xl mb-10")}>
+                  Get Started
+                </RainbowButton>
+              </Link>
+            </motion.div>
+            <motion.div variants={itemVariants}>
+              <AnimatedImage
+                src="/home.png"
+                alt="Image"
+                width={1200}
+                height={900}
+                className="w-full h-auto max-w-6xl mx-auto rounded-2xl shadow-lg"
+              />
+            </motion.div>
+          </motion.div>
+          <div className="w-[80%] sm:w-[50%] mx-auto mt-16 z-20">
+            <Faqs />
+          </div>
         </div>
-      
+      </main>
     </div>
   );
 };

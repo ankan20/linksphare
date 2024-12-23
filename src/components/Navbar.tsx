@@ -6,17 +6,14 @@ import { Button } from "@/components/ui/button";
 import { AiFillStar } from "react-icons/ai";
 import { BiCoffee } from "react-icons/bi";
 import { ModeToggle } from "./ModeToggle";
-import { useTheme } from "next-themes";
-import { Laptop, Moon, Sun } from "lucide-react";
-
+import { FaStar } from "react-icons/fa";
 const Navbar = () => {
-  const { setTheme } = useTheme();
   return (
-    <div className="border-b">
-      <div className="flex h-16 w-full items-center px-4 container mx-auto">
+    <div className="w-full border-b h-16 sticky top-0 z-50 lg:px-4 px-2 backdrop-filter backdrop-blur-xl bg-opacity-5">
+      <div className="flex h-full items-center px-4 container mx-auto">
         {/* Left Section  */}
         <div className="font-bold text-2xl flex-1">
-          <Link href="/" className="flex items-center">
+          <Link href="/" >
             <span className="inline bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 text-transparent bg-clip-text drop-shadow-lg">
               LinkSphere🔗
             </span>
@@ -35,45 +32,17 @@ const Navbar = () => {
          </Button>
         <Button
           variant="outline"
-          onClick={() => window.open("", "_blank")}
+          onClick={() => window.open("https://github.com/ankan20/linksphare", "_blank")}
           className="bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
         >
-          <AiFillStar className="mr-1" />
-          Star this project
+          {/* <AiFillStar className="mr-1" /> */}
+          <FaStar className="text-yellow-500 text-2xl mr-1" />
+          <span className="hidden sm:block">Star this project</span>
         </Button>
         <SignedIn>
           <UserButton />
         </SignedIn>
         <ModeToggle />
-        {/* <div className="space-y-2">
-                    <label className="text-sm font-medium">Theme</label>
-                    <div className="flex justify-between gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full"
-                        onClick={() => setTheme("light")}
-                      >
-                        <Sun className="h-4 w-4 mr-1" /> Light
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full"
-                        onClick={() => setTheme("dark")}
-                      >
-                        <Moon className="h-4 w-4 mr-1" /> Dark
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full"
-                        onClick={() => setTheme("system")}
-                      >
-                        <Laptop className="h-4 w-4 mr-1" /> System
-                      </Button>
-                    </div>
-                  </div> */}
       </div>
     </div>
    </div >

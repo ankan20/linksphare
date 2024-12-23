@@ -1,10 +1,11 @@
+"use client";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { PlusCircle, Send, Trash } from "lucide-react";
 import axios from "axios";
-import toast from "react-hot-toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface LinkField {
     title: string;
@@ -16,6 +17,7 @@ const ProjectDialog = ({ isDialogOpen, setIsDialogOpen }: any) => {
     const [linkFields, setLinkFields] = useState<LinkField[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const {toast }= useToast();
 
     const handleAddLinkField = () => {
         setLinkFields([...linkFields, { title: "", url: "" }]);
@@ -35,7 +37,7 @@ const ProjectDialog = ({ isDialogOpen, setIsDialogOpen }: any) => {
     const handleAddProject = async () => {
         try {
             setIsSubmitting(true);
-            setErrorMessage(""); // Reset any previous errors
+            setErrorMessage("");
 
             const projectData = {
                 name: newProject.name,
@@ -43,36 +45,46 @@ const ProjectDialog = ({ isDialogOpen, setIsDialogOpen }: any) => {
                 links: linkFields.map((link) => ({
                     title: link.title,
                     originalUrl: link.url,
-                    tags: "", // Tags can be handled if required
+                    tags: [],
                 })),
             };
 
-            // Make the API request using axios
             const response = await axios.post("/api/projects", projectData, {
                 headers: {
                     "Content-Type": "application/json",
                 },
             });
 
-            // If the request is successful, show success toast and reset the form
             if (response.status === 201) {
-                toast.success("Project created successfully!");
+                toast({
+                    title: "Project Created Successfully",
+                    description: "Your project has been created successfully.",
+                  });
                 setIsDialogOpen(false);
                 setNewProject({ name: "", description: "" });
                 setLinkFields([]);
             }
         } catch (error: any) {
             console.error("Error creating project:", error);
-            toast.error("An error occurred while creating the project.");
+            toast({
+                title: "Error creating project",
+                description: "An error occurred while creating the project.",
+            })
             setErrorMessage("An error occurred while creating the project.");
         } finally {
             setIsSubmitting(false);
         }
     };
 
+    const handleCloseDialog = () => {
+        setIsDialogOpen(false);
+        setNewProject({ name: "", description: "" });
+        setLinkFields([]);
+    }
+
     return (
-        <Dialog open={isDialogOpen} onOpenChange={() => setIsDialogOpen(false)}>
-            <DialogContent className="bg-gray-900 text-white p-6 rounded-lg">
+        <Dialog open={isDialogOpen} onOpenChange={handleCloseDialog}>
+            <DialogContent className="p-6 rounded-lg bg-white text-black dark:bg-gray-900 dark:text-white">
                 <DialogHeader>
                     <DialogTitle className="text-xl font-semibold">Create New Project</DialogTitle>
                 </DialogHeader>
@@ -80,36 +92,36 @@ const ProjectDialog = ({ isDialogOpen, setIsDialogOpen }: any) => {
                 <div className="space-y-4">
                     <Input
                         placeholder="Project Name"
-                        className="bg-gray-800 text-white border-gray-600"
+                        className="border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
                         value={newProject.name}
                         onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
                     />
                     <Input
                         placeholder="Project Description"
-                        className="bg-gray-800 text-white border-gray-600"
+                        className="border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
                         value={newProject.description}
                         onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
                     />
 
                     {linkFields.length > 0 && (
                         <div className="space-y-2">
-                            <h3 className="font-bold text-gray-300">Links</h3>
+                            <h3 className="font-bold text-gray-700 dark:text-gray-300">Links</h3>
                             {linkFields.map((link, index) => (
-                                <div key={index} className="flex items-center space-x-2 bg-gray-700 p-2 rounded-lg">
+                                <div key={index} className="flex items-center space-x-2 p-2 rounded-lg bg-gray-100 dark:bg-gray-700">
                                     <Input
                                         placeholder="Title"
-                                        className="bg-transparent text-white border-gray-600 flex-1"
+                                        className="flex-1 border-gray-300 dark:bg-transparent dark:border-gray-600 dark:text-white"
                                         value={link.title}
                                         onChange={(e) => updateLinkField(index, "title", e.target.value)}
                                     />
                                     <Input
                                         placeholder="URL"
-                                        className="bg-transparent text-white border-gray-600 flex-1"
+                                        className="flex-1 border-gray-300 dark:bg-transparent dark:border-gray-600 dark:text-white"
                                         value={link.url}
                                         onChange={(e) => updateLinkField(index, "url", e.target.value)}
                                     />
                                     <button
-                                        className="text-red-500 hover:text-red-700"
+                                        className="text-red-500 hover:text-red-700 dark:hover:text-red-400"
                                         onClick={() => handleDeleteLinkField(index)}
                                     >
                                         <Trash className="w-5 h-5" />
@@ -119,7 +131,11 @@ const ProjectDialog = ({ isDialogOpen, setIsDialogOpen }: any) => {
                         </div>
                     )}
 
-                    <Button variant="outline" className="flex items-center text-black" onClick={handleAddLinkField}>
+                    <Button
+                        variant="outline"
+                        className="flex items-center border-gray-300 dark:border-gray-600"
+                        onClick={handleAddLinkField}
+                    >
                         <PlusCircle className="mr-2 h-4 w-4" />
                         Add Link
                     </Button>
@@ -131,7 +147,7 @@ const ProjectDialog = ({ isDialogOpen, setIsDialogOpen }: any) => {
 
                 <DialogFooter className="mt-4">
                     <Button
-                        className="flex items-center"
+                        className="flex items-center bg-purple-600 text-white hover:bg-purple-700 dark:bg-purple-800 dark:hover:bg-purple-900"
                         onClick={handleAddProject}
                         disabled={isSubmitting}
                     >
