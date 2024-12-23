@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+
+
+ 
+model User {
+  id            String    @id @default(cuid())
+  clerkUserId  String   @unique
+  name          String?
+  email         String?   @unique
+  projects    Project[] // A user can have multiple projects
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+ 
+model Project {
+  id          String    @id @default(cuid())
+  name        String
+  description String
+  done        Boolean   @default(false)
+  userId      String       // Foreign key to the User model
+  user        User      @relation(fields: [userId], references: [id],onDelete: Cascade)
+  links       Link[]    // A project can have multiple links
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Link {
+  id          String    @id @default(cuid())
+  originalUrl String     // The full original URL
+  shortUrl    String     @unique // The shortened URL
+  title       String
+  tags        String?
+  projectId   String       // Foreign key to the Project model
+  project     Project   @relation(fields: [projectId], references: [id],onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+}
