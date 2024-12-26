@@ -16,7 +16,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"; // Importing Shadcn Table
+} from "@/components/ui/table"; 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 
@@ -134,7 +134,7 @@ const Dashboard = () => {
         <div className="space-y-6">
           <div className="w-48 h-8 bg-muted animate-pulse rounded-md" />
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {[...Array(4)].map((_, i) => (
+            {[...Array(2)].map((_, i) => (
               <div key={i} className="h-24 bg-muted animate-pulse rounded-lg" />
             ))}
           </div>
