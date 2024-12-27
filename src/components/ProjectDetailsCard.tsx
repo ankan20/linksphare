@@ -85,12 +85,6 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
 
   const totalPages = Math.ceil(filteredLinks.length / ITEMS_PER_PAGE);
 
-  const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
-
   return (
     <div className="dark:bg-[#10101b] bg-[#f8f9fa] min-h-screen p-6 rounded-lg">
       {project && (
