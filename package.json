@@ -40,6 +40,7 @@
     "react-toast": "^1.0.3",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
+    "valid-url": "^1.0.9",
     "zod": "^3.24.1"
   },
   "devDependencies": {
@@ -48,6 +49,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/valid-url": "^1.0.7",
     "eslint": "^9",
     "eslint-config-next": "15.1.2",
     "postcss": "^8",

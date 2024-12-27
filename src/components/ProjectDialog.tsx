@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,10 @@ const ProjectDialog = ({ isDialogOpen, setIsDialogOpen }: any) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const {toast }= useToast();
+
+    useEffect(()=>{
+            setErrorMessage("");
+        },[isDialogOpen])
 
     const handleAddLinkField = () => {
         setLinkFields([...linkFields, { title: "", url: "" }]);

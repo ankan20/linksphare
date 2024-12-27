@@ -6,7 +6,9 @@ import { Table, TableRow, TableHead, TableBody, TableCell, TableHeader } from "@
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Copy, Edit, Trash, Tag } from "lucide-react"; // Import icons from lucide-react
+import { Copy, Edit, Trash, Tag, PlusCircle } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import LinkDialog from "./LinkDialog";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -16,13 +18,9 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
   const [tags, setTags] = useState<any>("");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
-
-  useEffect(() => {
-    if (id) {
-      fetchProjectDetails(id);
-    }
-  }, [id]);
 
   const fetchProjectDetails = async (projectId: any) => {
     try {
@@ -35,8 +33,16 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
         description: "Failed to load project details",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (id) {
+      fetchProjectDetails(id);
+    }
+  }, [id, isDialogOpen]);
 
   const handleTagAddition = async (linkId: any, newTags: any) => {
     try {
@@ -84,105 +90,163 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
   );
 
   const totalPages = Math.ceil(filteredLinks.length / ITEMS_PER_PAGE);
+  if (isLoading) {
+    return (
+      <div className="container mx-auto py-8">
+        <div className="space-y-6">
+          <div className="w-48 h-8 bg-muted animate-pulse rounded-md" />
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {[...Array(2)].map((_, i) => (
+              <div key={i} className="h-24 bg-muted animate-pulse rounded-lg" />
+            ))}
+          </div>
+          <div className="h-[600px] bg-muted animate-pulse rounded-lg" />
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="dark:bg-[#10101b] bg-[#f8f9fa] min-h-screen p-6 rounded-lg">
-      {project && (
-        <>
-          <div className="mb-6">
-            <h2 className="text-white font-semibold">Project Details</h2>
-            <h1 className="text-2xl font-bold text-white mb-4">{project.name}</h1>
-            <p className="text-white mb-6">{project.description}</p>
+    <div className="bg-background/50 min-h-[90vh] p-6 rounded-lg">
+      <Card className="w-full">
+        <CardHeader>
+          <h2 className="dark:text-white font-semibold">Project Details</h2>
+          <CardTitle>
+            {project.name}
+          </CardTitle>
+          <CardDescription>{project.description}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <Card className="p-6">
+              <CardTitle>Total Links</CardTitle>
+              <CardDescription>Total number of links added to this project till now.</CardDescription>
+              <CardContent className="mt-4">
+                <p className="text-4xl font-bold text-gray-900 dark:text-white">{links?.length}</p>
+              </CardContent>
+            </Card>
           </div>
 
-          <div className="mb-4">
+          <div className="mb-4 flex flex-col sm:flex-row sm:items-start sm:justify-start gap-5">
             <Input
               type="text"
               placeholder="Search links"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-dark text-white border-none"
+              className="sm:w-96  text-black dark:text-white dark:bg-black bg-slate-100"
             />
+            <Button
+              className="bg-gray-200 text-black dark:bg-gray-800 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700"
+              onClick={() => setIsDialogOpen(true)}
+            >
+              <PlusCircle className="w-5 h-5" />
+              <span>Add Link</span>
+            </Button>
           </div>
-
-          <Table >
-            <TableHeader >
-              <TableRow >
-                <TableHead>Title</TableHead>
-                <TableHead>Original URL</TableHead>
-                <TableHead>Shortened URL</TableHead>
-                <TableHead>Tags</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {paginatedLinks.map((link: any) => (
-                <TableRow key={link.id} >
-                  <TableCell>{link.title}</TableCell>
-                  <TableCell>
-                    <a
-                      href={link.originalUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-400 hover:underline"
-                    >
-                      {link.originalUrl}
-                    </a>
-                  </TableCell>
-                  <TableCell>
-                    {link.shortUrl}
-                    <Button
-                      onClick={() =>
-                        navigator.clipboard.writeText(link.shortUrl)
-                      }
-                      variant="ghost"
-                      className="text-green-400"
-                    >
-                      <Copy size={16} />
-                    </Button>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      {link.tags.map((tag: string) => (
-                        <span
-                          key={tag}
-                          className="bg-gray-700 text-white px-3 py-1 rounded-full text-sm flex items-center gap-1"
-                        >
-                          <Tag size={14} />
-                          {tag}
-                        </span>
+          {
+            paginatedLinks.length === 0 ? (
+              <div className="p-4 text-center text-muted-foreground">
+                No links found , try something else?
+              </div>
+            ) :
+              (
+                <div className="rounded-md border">
+                  <Table >
+                    <TableHeader >
+                      <TableRow >
+                        <TableHead>Title</TableHead>
+                        <TableHead>Original URL</TableHead>
+                        <TableHead>Shortened URL</TableHead>
+                        <TableHead>Tags</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {paginatedLinks.map((link: any) => (
+                        <TableRow key={link.id} >
+                          <TableCell>{link.title}</TableCell>
+                          <TableCell>
+                            <a
+                              href={link.originalUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-400 hover:underline"
+                            >
+                              {link.originalUrl}
+                            </a>
+                          </TableCell>
+                          <TableCell>
+                            {link.shortUrl}
+                            <Button
+                              onClick={() => {
+                                const fullUrl = `${window.location.origin}/${link.shortUrl}`; // Construct the full URL
+                                navigator.clipboard.writeText(fullUrl)
+                                  .then(() => {
+                                    toast({
+                                      title: "Copied!",
+                                      description: "The short URL has been copied to your clipboard.",
+                                      variant: "success",
+                                    });
+                                  })
+                                  .catch(() => {
+                                    toast({
+                                      title: "Error",
+                                      description: "Failed to copy the URL. Please try again.",
+                                      variant: "destructive",
+                                    });
+                                  });
+                              }}
+                              variant="ghost"
+                              className="text-green-400"
+                            >
+                              <Copy size={16} />
+                            </Button>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex gap-2">
+                              {link.tags.map((tag: string) => (
+                                <span
+                                  key={tag}
+                                  className="bg-gray-700 text-white px-3 py-1 rounded-full text-sm flex items-center gap-1"
+                                >
+                                  <Tag size={14} />
+                                  {tag}
+                                </span>
+                              ))}
+                              <Input
+                                type="text"
+                                placeholder="Add tags"
+                                value={tags}
+                                onChange={(e) => setTags(e.target.value)}
+                                className="bg-dark text-white"
+                              />
+                              <Button
+                                onClick={() => handleTagAddition(link.id, tags)}
+                                className="ml-2 text-blue-400"
+                              >
+                                <Tag size={16} />
+                              </Button>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              onClick={() => handleDeleteLink(link.id)}
+                              variant="ghost"
+                              className="text-red-400"
+                            >
+                              <Trash size={16} />
+                            </Button>
+                            <Button variant="ghost" className="text-yellow-400">
+                              <Edit size={16} />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
                       ))}
-                      <Input
-                        type="text"
-                        placeholder="Add tags"
-                        value={tags}
-                        onChange={(e) => setTags(e.target.value)}
-                        className="bg-dark text-white"
-                      />
-                      <Button
-                        onClick={() => handleTagAddition(link.id, tags)}
-                        className="ml-2 text-blue-400"
-                      >
-                        <Tag size={16} />
-                      </Button>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      onClick={() => handleDeleteLink(link.id)}
-                      variant="ghost"
-                      className="text-red-400"
-                    >
-                      <Trash size={16} />
-                    </Button>
-                    <Button variant="ghost" className="text-yellow-400">
-                      <Edit size={16} />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                    </TableBody>
+                  </Table>
+                </div>
+              )
+          }
 
           <div className="flex justify-between mt-4">
             <Button
@@ -201,8 +265,9 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
               Next
             </Button>
           </div>
-        </>
-      )}
+        </CardContent>
+      </Card>
+      <LinkDialog isDialogOpen={isDialogOpen} setIsDialogOpen={setIsDialogOpen} projectId={id} />
     </div>
   );
 };

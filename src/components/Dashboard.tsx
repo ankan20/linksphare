@@ -188,7 +188,6 @@ const Dashboard = () => {
             placeholder="Search projects"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className=""
           />
           <Select onValueChange={(value) => setFilterStatus(value)} defaultValue="all">
             <SelectTrigger>
