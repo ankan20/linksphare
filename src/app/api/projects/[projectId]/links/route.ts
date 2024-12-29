@@ -10,6 +10,8 @@ export async function POST(req: NextRequest, { params }: { params: { projectId: 
         // Get logged-in user's Clerk ID
         const { userId } = getAuth(req);
 
+        
+
         if (!userId) {
             return NextResponse.json(
                 { error: "Unauthorized" },
@@ -17,7 +19,13 @@ export async function POST(req: NextRequest, { params }: { params: { projectId: 
             );
         }
         const body = await req.json(); 
-
+        let user = await prisma.user.findUnique({
+            where: { clerkUserId: userId as string },
+          });
+        if(!user){
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+        
         if (!body || typeof body !== "object") {
             return NextResponse.json(
                 { error: "Invalid request body. Expecting JSON object." },
@@ -39,11 +47,17 @@ export async function POST(req: NextRequest, { params }: { params: { projectId: 
                 { status: 400 }
             );
         }
+        const host = req.headers.get('host'); 
+        const protocol = req.headers.get('x-forwarded-proto') || 'http'; //  protocol (HTTP or HTTPS)
+        const defaultDomain = `${protocol}://${host}`; 
+
+        const baseDomain = user?.isMonetized ? user?.customDomain : defaultDomain;
         const validatedLink = {
             title,
             originalUrl: url,
             tags: Array.isArray(tags) ? tags : [],
-            shortUrl: nanoid(8),
+            // shortUrl:`${baseDomain}/${nanoid(8)}`,
+            shortUrl:nanoid(8),
         };
 
         try {
