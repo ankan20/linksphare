@@ -10,19 +10,23 @@ import { Copy, Edit, Trash, Tag, PlusCircle } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import LinkDialog from "./LinkDialog";
 import LinkEditDialog from "./LinkEditDialog";
+import AlertCard from "./AlertCard";
+import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@/components/ui/alert-dialog";
+
 
 const ITEMS_PER_PAGE = 10;
 
 const ProjectDetailsCard = ({ id }: { id: any }) => {
   const [project, setProject] = useState<any>(null);
   const [links, setLinks] = useState<any>([]);
-  const [tags, setTags] = useState<any>("");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpenAddLink, setIsDialogOpenAddLink] = useState(false);
   const [isDialogOpenEditLink, setIsDialogOpenEditLink] = useState(false);
   const [linkId,setLinkId]=useState<string>("");
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [isDeleting,setIsDeleting] = useState(false);
   const { toast } = useToast();
 
   const fetchProjectDetails = async (projectId: any) => {
@@ -47,10 +51,11 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
     }
   }, [id, isDialogOpenAddLink,isDialogOpenEditLink]);
 
-  const handleDeleteLink = async (linkId: any) => {
+  const handleDeleteLink = async (linkId: any,projectId:any) => {
     try {
-      await axios.delete(`/api/links/${linkId}`);
-      fetchProjectDetails(id); // Refresh data
+      setIsDeleting(true);
+      await axios.delete(`/api/projects/${projectId}/links/${linkId}`);
+      fetchProjectDetails(id); 
       toast({
         title: "Success",
         description: "Link deleted successfully!",
@@ -63,19 +68,22 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
         variant: "destructive",
       });
     }
+    finally{
+      setIsDeleting(false);
+      setIsAlertOpen(false);
+    }
   };
 
-  const filteredLinks = links.filter((link: any) =>
-    link.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+   function filterLinks(links:[], searchQuery:string) {
+    const query = searchQuery.toLowerCase();
+    console.log(query)
+    return links.filter((link:any) => 
+      link.title.toLowerCase().includes(query) ||
+      (link.tags && link.tags.some((tag:any) => tag.toLowerCase().includes(query)))
+    );
+  }
 
-  // export function filterLinks(links, searchQuery) {
-  //   const query = searchQuery.toLowerCase();
-  //   return links.filter((link) => 
-  //     link.title.toLowerCase().includes(query) ||
-  //     (link.tags && link.tags.some(tag => tag.toLowerCase().includes(query)))
-  //   );
-  // }
+  const filteredLinks =filterLinks(links,searchQuery);
 
   const paginatedLinks = filteredLinks.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
@@ -150,6 +158,7 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
                         <TableHead>Title</TableHead>
                         <TableHead>Original URL</TableHead>
                         <TableHead>Shortened URL</TableHead>
+                        <TableHead>Total Clicks</TableHead>
                         <TableHead>Tags</TableHead>
                         <TableHead>Actions</TableHead>
                       </TableRow>
@@ -195,6 +204,7 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
                               <Copy size={16} />
                             </Button>
                           </TableCell>
+                          <TableCell>{link.clicks}</TableCell>
                           <TableCell>
                             <div className="flex gap-2">
                               {link.tags.map((tag: string) => (
@@ -210,7 +220,7 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
                           </TableCell>
                           <TableCell>
                             <Button
-                              onClick={() => handleDeleteLink(link.id)}
+                              onClick={()=>{setIsAlertOpen(true);setLinkId(link.id)}}
                               variant="ghost"
                               className="text-red-400"
                             >
@@ -251,6 +261,30 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
       </Card>
       <LinkDialog isDialogOpen={isDialogOpenAddLink} setIsDialogOpen={setIsDialogOpenAddLink} projectId={id} />
       <LinkEditDialog isDialogOpen={isDialogOpenEditLink} setIsDialogOpen={setIsDialogOpenEditLink} projectId={id} linkId={linkId} />
+      <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
+        <AlertDialogTrigger />
+        <AlertDialogContent>
+          <AlertDialogHeader>Confirm Deletion</AlertDialogHeader>
+          <AlertDialogDescription>
+          Are you sure you want to delete this link? This action cannot be undone.
+          </AlertDialogDescription>
+          <div className="flex justify-end space-x-2">
+            <AlertDialogCancel
+              onClick={() => setIsAlertOpen(false)} // Close dialog if cancel
+              disabled={isDeleting}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => handleDeleteLink(linkId,id)} // Proceed with deletion
+              disabled={isDeleting}
+            >
+              {isDeleting? "Deleting...":"Delete"}
+              
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

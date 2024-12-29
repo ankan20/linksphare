@@ -4,9 +4,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { isWebUri } from 'valid-url';
 
 // Fetch link details
-export async function GET(req:NextRequest, { params }:{params:{linkId:string}}) {
+export async function GET(req:NextRequest, { params }:{params:{linkId:string,projectId:string}}) {
   const { userId } = getAuth(req);
-  const { linkId } =await params;
+  const { linkId,projectId } =await params;
 
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -16,6 +16,7 @@ export async function GET(req:NextRequest, { params }:{params:{linkId:string}}) 
     const link = await prisma.link.findUnique({
       where: { 
         id: linkId,
+        projectId,
         project: {
             user: {
               clerkUserId: userId,
@@ -71,33 +72,45 @@ export async function POST(req:NextRequest, { params }:{params:{linkId:string,pr
     //     return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
     //   }
   
-      const project = await prisma.project.findFirst({
-        where: {
-          id: projectId,
-          user: {
-            clerkUserId: userId, 
-          },
-        },
-      });
+      // const project = await prisma.project.findFirst({
+      //   where: {
+      //     id: projectId,
+      //     user: {
+      //       clerkUserId: userId, 
+      //     },
+      //   },
+      // });
   
-      if (!project) {
-        return NextResponse.json({ error: 'Project not found or unauthorized' }, { status: 404 });
-      }
+      // if (!project) {
+      //   return NextResponse.json({ error: 'Project not found or unauthorized' }, { status: 404 });
+      // }
   
       // Check if the link belongs to the project
-      const link = await prisma.link.findFirst({
-        where: {
-          id: linkId,
-          projectId: projectId,
-        },
-      });
+      // const link = await prisma.link.findFirst({
+      //   where: {
+      //     id: linkId,
+      //     projectId: projectId,
+      //     project:{
+      //       user:{
+      //         clerkUserId:userId
+      //       }
+      //     }
+      //   },
+      // });
   
-      if (!link) {
-        return NextResponse.json({ error: 'Link not found in this project' }, { status: 404 });
-      }
+      // if (!link) {
+      //   return NextResponse.json({ error: 'Link not found in this project' }, { status: 404 });
+      // }
   
       const updatedLink = await prisma.link.update({
-        where: { id: linkId },
+        where: { id: linkId,
+          projectId: projectId,
+          project:{
+            user:{
+              clerkUserId:userId
+            }
+          }
+         },
         data: {
           title,
           originalUrl,
@@ -108,6 +121,33 @@ export async function POST(req:NextRequest, { params }:{params:{linkId:string,pr
       return NextResponse.json(updatedLink, { status: 200 });
     } catch (error) {
       console.error('Error updating link:', error);
-      return NextResponse.json({ error: 'Error updating link.' }, { status: 500 });
+      return NextResponse.json({ error: 'Error updating link.' ,originalError:error}, { status: 500 });
+    }
+  }
+
+  export async function DELETE(req:NextRequest , { params }:{params:{linkId:string,projectId:string}}){
+    const { userId } = getAuth(req);
+    const { linkId, projectId } = await params;
+
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    try{
+      await prisma.link.delete({
+        where: { 
+          id: linkId ,
+          projectId,
+          project:{
+            user:{
+              clerkUserId:userId
+            }
+          }
+        },
+      });
+
+      return NextResponse.json({message:"Link deleted successfully"}, { status: 200 });
+    }catch(error){
+      console.error('Error updating link:', error);
+      return NextResponse.json({ error: 'Error updating link.' ,originalError:error}, { status: 500 }); 
     }
   }

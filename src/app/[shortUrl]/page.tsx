@@ -4,14 +4,23 @@ import prisma from "@/lib/prisma";
 export default async function ShortUrlRedirect({ params }: { params: { shortUrl: string } }) {
     const { shortUrl } = await params;
 
-    // Fetch the original URL from the database
     const link = await prisma.link.findUnique({
         where: { shortUrl },
     });
 
     if (link?.originalUrl) {
+        await prisma.link.update({
+            where: { shortUrl },
+            data: {
+                clicks: {
+                    increment: 1,
+                },
+            },
+        });
         // Render the advertisement page
+
         return <AdPage originalUrl={link.originalUrl} />;
+
     }
 
     return (

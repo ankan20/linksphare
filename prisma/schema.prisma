@@ -19,12 +19,14 @@ datasource db {
  
 model User {
   id            String    @id @default(cuid())
-  clerkUserId  String   @unique
+  clerkUserId   String   @unique
   name          String?
   email         String?   @unique
-  projects    Project[] // A user can have multiple projects
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  isMonetized   Boolean   @default(false)
+  customDomain  String?
+  projects      Project[] // A user can have multiple projects
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
  
 model Project {
@@ -43,6 +45,7 @@ model Link {
   id          String    @id @default(cuid())
   originalUrl String     // The full original URL
   shortUrl    String     @unique // The shortened URL
+  clicks       Int       @default(0)
   title       String
   tags        String[]
   projectId   String       // Foreign key to the Project model
