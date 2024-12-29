@@ -1,4 +1,3 @@
-// app/[shortUrl]/page.tsx
 import AdPage from "@/components/AdPage";
 import prisma from "@/lib/prisma";
 

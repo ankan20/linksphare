@@ -48,7 +48,12 @@ export async function POST(req: NextRequest, { params }: { params: { projectId: 
 
         try {
             await prisma.project.update({
-                where: { id: projectId },
+                where: { 
+                    id: projectId,
+                    user:{
+                        clerkUserId: userId,
+                    }
+                },
                 data: {
                     links: {
                         create: validatedLink,

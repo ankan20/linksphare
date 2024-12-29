@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Copy, Edit, Trash, Tag, PlusCircle } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import LinkDialog from "./LinkDialog";
+import LinkEditDialog from "./LinkEditDialog";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -19,7 +20,9 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDialogOpenAddLink, setIsDialogOpenAddLink] = useState(false);
+  const [isDialogOpenEditLink, setIsDialogOpenEditLink] = useState(false);
+  const [linkId,setLinkId]=useState<string>("");
   const { toast } = useToast();
 
   const fetchProjectDetails = async (projectId: any) => {
@@ -42,25 +45,7 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
     if (id) {
       fetchProjectDetails(id);
     }
-  }, [id, isDialogOpen]);
-
-  const handleTagAddition = async (linkId: any, newTags: any) => {
-    try {
-      await axios.put(`/api/links/${linkId}/tags`, { tags: newTags });
-      fetchProjectDetails(id); // Refresh data
-      toast({
-        title: "Success",
-        description: "Tags added successfully!",
-        variant: "success",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to add tags",
-        variant: "destructive",
-      });
-    }
-  };
+  }, [id, isDialogOpenAddLink,isDialogOpenEditLink]);
 
   const handleDeleteLink = async (linkId: any) => {
     try {
@@ -83,6 +68,14 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
   const filteredLinks = links.filter((link: any) =>
     link.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // export function filterLinks(links, searchQuery) {
+  //   const query = searchQuery.toLowerCase();
+  //   return links.filter((link) => 
+  //     link.title.toLowerCase().includes(query) ||
+  //     (link.tags && link.tags.some(tag => tag.toLowerCase().includes(query)))
+  //   );
+  // }
 
   const paginatedLinks = filteredLinks.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
@@ -137,7 +130,7 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
             />
             <Button
               className="bg-gray-200 text-black dark:bg-gray-800 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700"
-              onClick={() => setIsDialogOpen(true)}
+              onClick={() => setIsDialogOpenAddLink(true)}
             >
               <PlusCircle className="w-5 h-5" />
               <span>Add Link</span>
@@ -213,19 +206,6 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
                                   {tag}
                                 </span>
                               ))}
-                              <Input
-                                type="text"
-                                placeholder="Add tags"
-                                value={tags}
-                                onChange={(e) => setTags(e.target.value)}
-                                className="bg-dark text-white"
-                              />
-                              <Button
-                                onClick={() => handleTagAddition(link.id, tags)}
-                                className="ml-2 text-blue-400"
-                              >
-                                <Tag size={16} />
-                              </Button>
                             </div>
                           </TableCell>
                           <TableCell>
@@ -236,7 +216,9 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
                             >
                               <Trash size={16} />
                             </Button>
-                            <Button variant="ghost" className="text-yellow-400">
+                            <Button variant="ghost" className="text-yellow-400" onClick={()=>{setIsDialogOpenEditLink(true);
+                              setLinkId(link.id);
+                            }}>
                               <Edit size={16} />
                             </Button>
                           </TableCell>
@@ -267,7 +249,8 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
           </div>
         </CardContent>
       </Card>
-      <LinkDialog isDialogOpen={isDialogOpen} setIsDialogOpen={setIsDialogOpen} projectId={id} />
+      <LinkDialog isDialogOpen={isDialogOpenAddLink} setIsDialogOpen={setIsDialogOpenAddLink} projectId={id} />
+      <LinkEditDialog isDialogOpen={isDialogOpenEditLink} setIsDialogOpen={setIsDialogOpenEditLink} projectId={id} linkId={linkId} />
     </div>
   );
 };

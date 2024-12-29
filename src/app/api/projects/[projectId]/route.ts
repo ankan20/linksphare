@@ -21,7 +21,7 @@ export async function GET(req: NextRequest, { params }: { params: { projectId: s
       where: {
         id: projectId,
         user: {
-          clerkUserId: userId, // Ensure the project belongs to the logged-in user
+          clerkUserId: userId, 
         },
       },
       include: { links: true },

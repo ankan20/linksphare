@@ -78,7 +78,7 @@ const Dashboard = () => {
       setProjects((prevProjects: any) =>
         prevProjects.filter((project: any) => project.id !== projectId)
       );
-      toast({ description: response.data?.message || "Project deleted successfully." });
+      toast({ description: response.data?.message || "Project deleted successfully.",variant:"success" });
     } catch (error: any) {
       console.error("Error deleting project:", error);
       toast({
@@ -99,7 +99,7 @@ const Dashboard = () => {
           project.id === projectId ? { ...project, done: !status } : project
         )
       );
-      toast({ description: `Project marked as ${!status ? "done" : "in progress"}.` });
+      toast({ description: `Project marked as ${!status ? "done" : "in progress"}.`,variant:"success" });
     } catch (error: any) {
       console.error("Error updating project status:", error);
       toast({
