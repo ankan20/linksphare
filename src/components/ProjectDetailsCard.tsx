@@ -10,7 +10,6 @@ import { Copy, Edit, Trash, Tag, PlusCircle } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import LinkDialog from "./LinkDialog";
 import LinkEditDialog from "./LinkEditDialog";
-import AlertCard from "./AlertCard";
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@/components/ui/alert-dialog";
 
 
@@ -52,8 +51,8 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
   }, [id, isDialogOpenAddLink,isDialogOpenEditLink]);
 
   const handleDeleteLink = async (linkId: any,projectId:any) => {
+    setIsDeleting(true);
     try {
-      setIsDeleting(true);
       await axios.delete(`/api/projects/${projectId}/links/${linkId}`);
       fetchProjectDetails(id); 
       toast({
@@ -71,6 +70,7 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
     finally{
       setIsDeleting(false);
       setIsAlertOpen(false);
+      setLinkId('');
     }
   };
 
@@ -131,7 +131,7 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
           <div className="mb-4 flex flex-col sm:flex-row sm:items-start sm:justify-start gap-5">
             <Input
               type="text"
-              placeholder="Search links"
+              placeholder="Search links with title or tags"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="sm:w-96  text-black dark:text-white dark:bg-black bg-slate-100"
@@ -178,10 +178,17 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
                             </a>
                           </TableCell>
                           <TableCell>
+                          <a
+                              href={link.originalUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-400 hover:underline"
+                            >
                             {link.shortUrl}
+                            </a>
                             <Button
                               onClick={() => {
-                                const fullUrl = `${window.location.origin}/${link.shortUrl}`; // Construct the full URL
+                                const fullUrl = `${window.location.origin}/${link.shortUrl}`; 
                                 navigator.clipboard.writeText(fullUrl)
                                   .then(() => {
                                     toast({

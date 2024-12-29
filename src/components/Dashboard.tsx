@@ -17,18 +17,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"; 
+import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 
 const Dashboard = () => {
   const [projects, setProjects] = useState<any>([]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterStatus, setFilterStatus] = useState("all");
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [filterStatus, setFilterStatus] = useState<string>("all");
   const { toast } = useToast();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [projectsPerPage] = useState(6);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [projectsPerPage] = useState<number>(6);
+  const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
+  const [projectId,setProjectId]=useState<string>("");
+  const [isDeleting,setIsDeleting] = useState<boolean>(false);
   const router = useRouter();
 
   const formatDate = (dateString: string): string => {
@@ -73,6 +77,7 @@ const Dashboard = () => {
   }, [isDialogOpen]);
 
   const handleDelete = async (projectId: string) => {
+    setIsDeleting(true);
     try {
       const response = await axios.post(`/api/project-delete/${projectId}`);
       setProjects((prevProjects: any) =>
@@ -85,6 +90,10 @@ const Dashboard = () => {
         description: error?.response?.data.error || "Failed to delete the project.",
         variant: "destructive",
       });
+    }finally{
+      setIsDeleting(false);
+      setProjectId('');
+      setIsAlertOpen(false);
     }
   };
 
@@ -148,7 +157,7 @@ const Dashboard = () => {
     <div className="p-6 min-h-screen bg-background/50 dark:bg-[#10101b] bg-[#f8f9fa]">
       <header className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">Manage your projects easily.</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Manage your projects easily.To add links in your project or to see all link's details with Shortened URL navigate to project details page.</p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -255,7 +264,9 @@ const Dashboard = () => {
                     variant="ghost"
                     size="sm"
                     className="text-red-500"
-                    onClick={() => handleDelete(project.id)}
+                    onClick={() => {setIsAlertOpen(true);
+                      setProjectId(project.id)
+                    }}
                   >
                     <Trash className="w-4 h-4" />
                   </Button>
@@ -286,6 +297,30 @@ const Dashboard = () => {
       </div>
 
       <ProjectDialog isDialogOpen={isDialogOpen} setIsDialogOpen={setIsDialogOpen} />
+      <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
+        <AlertDialogTrigger />
+        <AlertDialogContent>
+          <AlertDialogHeader>Confirm Deletion</AlertDialogHeader>
+          <AlertDialogDescription>
+          Are you sure you want to delete this project? This action cannot be undone.
+          </AlertDialogDescription>
+          <div className="flex justify-end space-x-2">
+            <AlertDialogCancel
+              onClick={() => setIsAlertOpen(false)} // Close dialog if cancel
+              disabled={isDeleting}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => handleDelete(projectId)} // Proceed with deletion
+              disabled={isDeleting}
+            >
+              {isDeleting? "Deleting...":"Delete"}
+              
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
