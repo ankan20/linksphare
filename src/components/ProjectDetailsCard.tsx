@@ -23,9 +23,10 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpenAddLink, setIsDialogOpenAddLink] = useState(false);
   const [isDialogOpenEditLink, setIsDialogOpenEditLink] = useState(false);
-  const [linkId,setLinkId]=useState<string>("");
+  const [linkId, setLinkId] = useState<string>("");
   const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const [isDeleting,setIsDeleting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showAllTags, setShowAllTags] = useState(false);
   const { toast } = useToast();
 
   const fetchProjectDetails = async (projectId: any) => {
@@ -48,13 +49,13 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
     if (id) {
       fetchProjectDetails(id);
     }
-  }, [id, isDialogOpenAddLink,isDialogOpenEditLink]);
+  }, [id, isDialogOpenAddLink, isDialogOpenEditLink]);
 
-  const handleDeleteLink = async (linkId: any,projectId:any) => {
+  const handleDeleteLink = async (linkId: any, projectId: any) => {
     setIsDeleting(true);
     try {
       await axios.delete(`/api/projects/${projectId}/links/${linkId}`);
-      fetchProjectDetails(id); 
+      fetchProjectDetails(id);
       toast({
         title: "Success",
         description: "Link deleted successfully!",
@@ -67,23 +68,23 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
         variant: "destructive",
       });
     }
-    finally{
+    finally {
       setIsDeleting(false);
       setIsAlertOpen(false);
       setLinkId('');
     }
   };
 
-   function filterLinks(links:[], searchQuery:string) {
+  function filterLinks(links: [], searchQuery: string) {
     const query = searchQuery.toLowerCase();
     console.log(query)
-    return links.filter((link:any) => 
+    return links.filter((link: any) =>
       link.title.toLowerCase().includes(query) ||
-      (link.tags && link.tags.some((tag:any) => tag.toLowerCase().includes(query)))
+      (link.tags && link.tags.some((tag: any) => tag.toLowerCase().includes(query)))
     );
   }
 
-  const filteredLinks =filterLinks(links,searchQuery);
+  const filteredLinks = filterLinks(links, searchQuery);
 
   const paginatedLinks = filteredLinks.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
@@ -178,17 +179,17 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
                             </a>
                           </TableCell>
                           <TableCell>
-                          <a
-                              href={link.originalUrl}
+                            <a
+                              href={`${window.location.origin}/${link.shortUrl}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-blue-400 hover:underline"
                             >
-                            {link.shortUrl}
+                              {link.shortUrl}
                             </a>
                             <Button
                               onClick={() => {
-                                const fullUrl = `${window.location.origin}/${link.shortUrl}`; 
+                                const fullUrl = `${window.location.origin}/${link.shortUrl}`;
                                 navigator.clipboard.writeText(fullUrl)
                                   .then(() => {
                                     toast({
@@ -213,8 +214,8 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
                           </TableCell>
                           <TableCell>{link.clicks}</TableCell>
                           <TableCell>
-                            <div className="flex gap-2">
-                              {link.tags.map((tag: string) => (
+                            <div className="flex gap-2 flex-wrap ">
+                              {link.tags.slice(0, 3).map((tag: string) => (
                                 <span
                                   key={tag}
                                   className="bg-gray-700 text-white px-3 py-1 rounded-full text-sm flex items-center gap-1"
@@ -223,17 +224,40 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
                                   {tag}
                                 </span>
                               ))}
+
+                              {showAllTags && link.tags.slice(3).map((tag: string) => (
+                                <span
+                                  key={tag}
+                                  className="bg-gray-700 text-white px-3 py-1 rounded-full text-sm flex items-center gap-1"
+                                >
+                                  <Tag size={14} />
+                                  {tag}
+                                </span>
+                              ))}
+
+                              {link.tags.length > 3 && (
+                                <Button
+                                  variant="link"
+                                  className="text-blue-400 p-0"
+                                  onClick={() => setShowAllTags((prev) => !prev)}
+                                >
+                                  {showAllTags ? "Show Less" : "Show More"}
+                                </Button>
+                              )}
+                              
                             </div>
                           </TableCell>
+
                           <TableCell>
                             <Button
-                              onClick={()=>{setIsAlertOpen(true);setLinkId(link.id)}}
+                              onClick={() => { setIsAlertOpen(true); setLinkId(link.id) }}
                               variant="ghost"
                               className="text-red-400"
                             >
                               <Trash size={16} />
                             </Button>
-                            <Button variant="ghost" className="text-yellow-400" onClick={()=>{setIsDialogOpenEditLink(true);
+                            <Button variant="ghost" className="text-yellow-400" onClick={() => {
+                              setIsDialogOpenEditLink(true);
                               setLinkId(link.id);
                             }}>
                               <Edit size={16} />
@@ -273,7 +297,7 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
         <AlertDialogContent>
           <AlertDialogHeader>Confirm Deletion</AlertDialogHeader>
           <AlertDialogDescription>
-          Are you sure you want to delete this link? This action cannot be undone.
+            Are you sure you want to delete this link? This action cannot be undone.
           </AlertDialogDescription>
           <div className="flex justify-end space-x-2">
             <AlertDialogCancel
@@ -283,11 +307,11 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => handleDeleteLink(linkId,id)} // Proceed with deletion
+              onClick={() => handleDeleteLink(linkId, id)} // Proceed with deletion
               disabled={isDeleting}
             >
-              {isDeleting? "Deleting...":"Delete"}
-              
+              {isDeleting ? "Deleting..." : "Delete"}
+
             </AlertDialogAction>
           </div>
         </AlertDialogContent>
