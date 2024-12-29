@@ -157,7 +157,7 @@ const Dashboard = () => {
     <div className="p-6 min-h-screen bg-background/50 dark:bg-[#10101b] bg-[#f8f9fa]">
       <header className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">Manage your projects easily.To add links in your project or to see all link's details with Shortened URL navigate to project details page.</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Manage your projects effortlessly. To add links to your project or view detailed information about each link, including the shortened URL, navigate to the project details page.</p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
