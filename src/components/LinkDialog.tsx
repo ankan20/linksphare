@@ -102,12 +102,14 @@ const LinkDialog = ({ isDialogOpen, setIsDialogOpen, projectId }: any) => {
                         placeholder="Title"
                         className="border-gray-300 dark:bg-transparent dark:border-gray-600 dark:text-white"
                         value={title}
+                        disabled={isSubmitting}
                         onChange={(e) => setTitle(e.target.value)}
                     />
                     <Input
                         placeholder="URL"
                         className="border-gray-300 dark:bg-transparent dark:border-gray-600 dark:text-white"
                         value={url}
+                        disabled={isSubmitting}
                         onChange={(e) => setUrl(e.target.value)}
                     />
                     <div className="space-y-2">
@@ -121,6 +123,7 @@ const LinkDialog = ({ isDialogOpen, setIsDialogOpen, projectId }: any) => {
                                     <button
                                         onClick={() => deleteTag(index)}
                                         className="ml-2 text-red-500 hover:text-red-700"
+                                        disabled={isSubmitting}
                                     >
                                         <Trash className="w-4 h-4" />
                                     </button>
@@ -133,11 +136,13 @@ const LinkDialog = ({ isDialogOpen, setIsDialogOpen, projectId }: any) => {
                                     placeholder="Enter tag"
                                     className="border-gray-300 dark:border-gray-600 dark:bg-transparent"
                                     value={currentTag}
+                                    disabled={isSubmitting}
                                     onChange={(e) => setCurrentTag(e.target.value)}
                                 />
                                 <Button
                                     className="bg-green-500 text-white hover:bg-green-600 dark:bg-green-700 dark:hover:bg-green-800"
                                     onClick={addTag}
+                                    disabled={isSubmitting}
                                 >
                                     Add
                                 </Button>
@@ -146,6 +151,7 @@ const LinkDialog = ({ isDialogOpen, setIsDialogOpen, projectId }: any) => {
                             <Button
                                 className="bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800"
                                 onClick={() => setIsTagInputVisible(true)}
+                                disabled={isSubmitting}
                             >
                                 <Tag size={14} /> Add Tag
                             </Button>

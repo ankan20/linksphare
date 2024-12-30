@@ -100,12 +100,14 @@ const ProjectDialog = ({ isDialogOpen, setIsDialogOpen }: any) => {
                         placeholder="Project Name"
                         className="border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
                         value={newProject.name}
+                        disabled={isSubmitting}
                         onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
                     />
                     <Input
                         placeholder="Project Description"
                         className="border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
                         value={newProject.description}
+                        disabled={isSubmitting}
                         onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
                     />
 
@@ -118,20 +120,23 @@ const ProjectDialog = ({ isDialogOpen, setIsDialogOpen }: any) => {
                                         placeholder="Title"
                                         className="flex-1 border-gray-300 dark:bg-transparent dark:border-gray-600 dark:text-white"
                                         value={link.title}
+                                        disabled={isSubmitting}
                                         onChange={(e) => updateLinkField(index, "title", e.target.value)}
                                     />
                                     <Input
                                         placeholder="URL"
                                         className="flex-1 border-gray-300 dark:bg-transparent dark:border-gray-600 dark:text-white"
                                         value={link.url}
+                                        disabled={isSubmitting}
                                         onChange={(e) => updateLinkField(index, "url", e.target.value)}
                                     />
-                                    <button
-                                        className="text-red-500 hover:text-red-700 dark:hover:text-red-400"
+                                    <Button
+                                        className="text-red-500  hover:text-red-700 dark:hover:text-red-400"
                                         onClick={() => handleDeleteLinkField(index)}
+                                        disabled={isSubmitting}
                                     >
                                         <Trash className="w-5 h-5" />
-                                    </button>
+                                    </Button>
                                 </div>
                             ))}
                         </div>
@@ -141,6 +146,7 @@ const ProjectDialog = ({ isDialogOpen, setIsDialogOpen }: any) => {
                         variant="outline"
                         className="flex items-center border-gray-300 dark:border-gray-600"
                         onClick={handleAddLinkField}
+                        disabled={isSubmitting}
                     >
                         <PlusCircle className="mr-2 h-4 w-4" />
                         Add Link
