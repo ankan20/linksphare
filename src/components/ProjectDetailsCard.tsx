@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/
 import LinkDialog from "./LinkDialog";
 import LinkEditDialog from "./LinkEditDialog";
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@/components/ui/alert-dialog";
+import NumberTicker from "./ui/number-ticker";
 
 
 const ITEMS_PER_PAGE = 10;
@@ -124,7 +125,7 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
               <CardTitle>Total Links</CardTitle>
               <CardDescription>Total number of links added to this project till now.</CardDescription>
               <CardContent className="mt-4">
-                <p className="text-4xl font-bold text-gray-900 dark:text-white">{links?.length}</p>
+                <p className="text-4xl font-bold text-gray-900 dark:text-white"><NumberTicker value={links?.length} />{links?.length ===0 && links?.length}</p>
               </CardContent>
             </Card>
           </div>
@@ -212,7 +213,7 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
                               <Copy size={16} />
                             </Button>
                           </TableCell>
-                          <TableCell>{link.clicks}</TableCell>
+                          <TableCell><NumberTicker value={link.clicks}/>{link.clicks ===0 && link.clicks}</TableCell>
                           <TableCell>
                             <div className="flex gap-2 flex-wrap ">
                               {link.tags.slice(0, 3).map((tag: string) => (

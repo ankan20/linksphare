@@ -43,7 +43,7 @@ const Home = () => {
                 word={
                   <>
                     Manage your links at{" "}
-                    <SparklesText className="inline" text="LinkSphare" />. 
+                    <SparklesText className="inline" text="LinkSphare" />
                     
                   </>
                 }
@@ -55,7 +55,7 @@ const Home = () => {
               className="text-xl text-opacity-60 tracking-normal text-center max-w-2xl mx-auto z-10"
               variants={itemVariants}
             >
-              {" "}Manage your links efficiently with Linksphare. Shorten URLs, store project details, and keep track of everything in one place.
+              {" "}Simplify your link management with LinkShare! Shorten URLs, organize project details, and track everything effortlessly in one centralized hub.
             </motion.h2>
             <motion.div variants={itemVariants} className="z-20">
               <Link href="/dashboard">

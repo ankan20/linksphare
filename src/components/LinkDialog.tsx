@@ -106,7 +106,7 @@ const LinkDialog = ({ isDialogOpen, setIsDialogOpen, projectId }: any) => {
                         onChange={(e) => setTitle(e.target.value)}
                     />
                     <Input
-                        placeholder="URL"
+                        placeholder="https://example.com"
                         className="border-gray-300 dark:bg-transparent dark:border-gray-600 dark:text-white"
                         value={url}
                         disabled={isSubmitting}

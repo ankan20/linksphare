@@ -16,10 +16,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"; 
+} from "@/components/ui/table";
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
+import NumberTicker from "@/components/ui/number-ticker";
+
 
 const Dashboard = () => {
   const [projects, setProjects] = useState<any>([]);
@@ -31,18 +33,18 @@ const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [projectsPerPage] = useState<number>(6);
   const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
-  const [projectId,setProjectId]=useState<string>("");
-  const [isDeleting,setIsDeleting] = useState<boolean>(false);
+  const [projectId, setProjectId] = useState<string>("");
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const router = useRouter();
 
   const formatDate = (dateString: string): string => {
     try {
       const date = new Date(dateString);
-  
+
       if (isNaN(date.getTime())) {
         throw new Error("Invalid date format");
       }
-  
+
       const options: Intl.DateTimeFormatOptions = {
         weekday: "long",
         year: "numeric",
@@ -53,7 +55,7 @@ const Dashboard = () => {
         // second: "2-digit",
         // timeZoneName: "short",
       };
-  
+
       return date.toLocaleDateString("en-US", options);
     } catch (error) {
       console.error("Error formatting date:", error);
@@ -83,14 +85,14 @@ const Dashboard = () => {
       setProjects((prevProjects: any) =>
         prevProjects.filter((project: any) => project.id !== projectId)
       );
-      toast({ description: response.data?.message || "Project deleted successfully.",variant:"success" });
+      toast({ description: response.data?.message || "Project deleted successfully.", variant: "success" });
     } catch (error: any) {
       console.error("Error deleting project:", error);
       toast({
         description: error?.response?.data.error || "Failed to delete the project.",
         variant: "destructive",
       });
-    }finally{
+    } finally {
       setIsDeleting(false);
       setProjectId('');
       setIsAlertOpen(false);
@@ -108,7 +110,7 @@ const Dashboard = () => {
           project.id === projectId ? { ...project, done: !status } : project
         )
       );
-      toast({ description: `Project marked as ${!status ? "done" : "in progress"}.`,variant:"success" });
+      toast({ description: `Project marked as ${!status ? "done" : "in progress"}.`, variant: "success" });
     } catch (error: any) {
       console.error("Error updating project status:", error);
       toast({
@@ -166,7 +168,7 @@ const Dashboard = () => {
             <CardTitle>Total Projects</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-4xl font-bold text-gray-900 dark:text-white">{totalProjects}</p>
+            <p className="text-4xl font-bold text-gray-900 dark:text-white"><NumberTicker value={totalProjects} /></p>
           </CardContent>
         </Card>
 
@@ -175,7 +177,7 @@ const Dashboard = () => {
             <CardTitle>Completed Projects</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-4xl font-bold text-gray-900 dark:text-white">{doneProjects}</p>
+            <p className="text-4xl font-bold text-gray-900 dark:text-white"><NumberTicker value={doneProjects} /></p>
           </CardContent>
         </Card>
       </div>
@@ -264,7 +266,8 @@ const Dashboard = () => {
                     variant="ghost"
                     size="sm"
                     className="text-red-500"
-                    onClick={() => {setIsAlertOpen(true);
+                    onClick={() => {
+                      setIsAlertOpen(true);
                       setProjectId(project.id)
                     }}
                   >
@@ -302,7 +305,7 @@ const Dashboard = () => {
         <AlertDialogContent>
           <AlertDialogHeader>Confirm Deletion</AlertDialogHeader>
           <AlertDialogDescription>
-          Are you sure you want to delete this project? This action cannot be undone.
+            Are you sure you want to delete this project? This action cannot be undone.
           </AlertDialogDescription>
           <div className="flex justify-end space-x-2">
             <AlertDialogCancel
@@ -315,8 +318,8 @@ const Dashboard = () => {
               onClick={() => handleDelete(projectId)} // Proceed with deletion
               disabled={isDeleting}
             >
-              {isDeleting? "Deleting...":"Delete"}
-              
+              {isDeleting ? "Deleting..." : "Delete"}
+
             </AlertDialogAction>
           </div>
         </AlertDialogContent>
