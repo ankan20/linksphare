@@ -7,7 +7,7 @@ interface PageProps {
     };
   }
 
-export default async function ShortUrlRedirect({ params }:PageProps) {
+export default async function ShortUrlRedirect({ params }:any) {
     const { shortUrl } = await params;
 
     const link = await prisma.link.findUnique({
