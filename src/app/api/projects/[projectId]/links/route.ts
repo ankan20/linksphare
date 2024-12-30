@@ -47,11 +47,11 @@ export async function POST(req: NextRequest, { params }: { params: { projectId: 
                 { status: 400 }
             );
         }
-        const host = req.headers.get('host'); 
-        const protocol = req.headers.get('x-forwarded-proto') || 'http'; //  protocol (HTTP or HTTPS)
-        const defaultDomain = `${protocol}://${host}`; 
+        // const host = req.headers.get('host'); 
+        // const protocol = req.headers.get('x-forwarded-proto') || 'http'; //  protocol (HTTP or HTTPS)
+        // const defaultDomain = `${protocol}://${host}`; 
 
-        const baseDomain = user?.isMonetized ? user?.customDomain : defaultDomain;
+        // const baseDomain = user?.isMonetized ? user?.customDomain : defaultDomain;
         const validatedLink = {
             title,
             originalUrl: url,

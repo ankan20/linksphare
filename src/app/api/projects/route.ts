@@ -27,11 +27,11 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const host = req.headers.get('host');
-    const protocol = req.headers.get('x-forwarded-proto') || 'http'; //  protocol (HTTP or HTTPS)
-    const defaultDomain = `${protocol}://${host}`;
+    // const host = req.headers.get('host');
+    // const protocol = req.headers.get('x-forwarded-proto') || 'http'; //  protocol (HTTP or HTTPS)
+    // const defaultDomain = `${protocol}://${host}`;
 
-    const baseDomain = user.isMonetized ? user.customDomain : defaultDomain;
+    // const baseDomain = user.isMonetized ? user.customDomain : defaultDomain;
 
     if (links && links.length > 0) {
       const linkData = links.map((link: { title: string; originalUrl: string; tags: string[] }) => (
