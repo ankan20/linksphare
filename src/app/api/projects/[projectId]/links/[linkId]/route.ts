@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { isWebUri } from 'valid-url';
 
 // Fetch link details
-export async function GET(req:NextRequest, { params }:{params:{linkId:string,projectId:string}}) {
+export async function GET(req:NextRequest, { params }:any) {
   const { userId } = getAuth(req);
   const { linkId,projectId } =await params;
 
@@ -38,7 +38,7 @@ export async function GET(req:NextRequest, { params }:{params:{linkId:string,pro
 }
 
 // Update link details
-export async function POST(req:NextRequest, { params }:{params:{linkId:string,projectId:string}}) {
+export async function POST(req:NextRequest, { params }:any) {
     const { userId } = getAuth(req);
     const { linkId, projectId } = await params;
   
@@ -125,7 +125,7 @@ export async function POST(req:NextRequest, { params }:{params:{linkId:string,pr
     }
   }
 
-  export async function DELETE(req:NextRequest , { params }:{params:{linkId:string,projectId:string}}){
+  export async function DELETE(req:NextRequest , { params }:any){
     const { userId } = getAuth(req);
     const { linkId, projectId } = await params;
 
