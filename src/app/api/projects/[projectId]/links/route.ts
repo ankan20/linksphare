@@ -19,7 +19,7 @@ export async function POST(req: NextRequest, { params }: { params: { projectId: 
             );
         }
         const body = await req.json(); 
-        let user = await prisma.user.findUnique({
+        const user = await prisma.user.findUnique({
             where: { clerkUserId: userId as string },
           });
         if(!user){

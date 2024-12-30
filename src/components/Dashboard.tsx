@@ -104,7 +104,7 @@ const Dashboard = () => {
       status: !status,
     };
     try {
-      const response = await axios.post(`/api/project-status/${projectId}`, updatedProject);
+      await axios.post(`/api/project-status/${projectId}`, updatedProject);
       setProjects((prevProjects: any) =>
         prevProjects.map((project: any) =>
           project.id === projectId ? { ...project, done: !status } : project

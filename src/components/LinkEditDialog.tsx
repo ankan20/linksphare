@@ -10,7 +10,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { PlusCircle, Send, Tag, Trash, Loader } from 'lucide-react';
+import { Send, Tag, Trash, Loader } from 'lucide-react';
 import axios from 'axios';
 import { useToast } from '@/hooks/use-toast';
 

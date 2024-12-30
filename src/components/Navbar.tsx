@@ -1,9 +1,8 @@
 "use client";
 
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { SignedIn, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { AiFillStar } from "react-icons/ai";
 import { BiCoffee } from "react-icons/bi";
 import { ModeToggle } from "./ModeToggle";
 import { FaStar } from "react-icons/fa";

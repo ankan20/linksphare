@@ -13,7 +13,7 @@ import { PlusCircle, Send, Tag, Trash } from "lucide-react";
 import axios from "axios";
 import { useToast } from "@/hooks/use-toast";
 
-const LinkDialog = ({ isDialogOpen, setIsDialogOpen, projectId }: any) => {
+const LinkDialog:React.FC<any> = ({ isDialogOpen, setIsDialogOpen, projectId }) => {
     const [title, setTitle] = useState<string>("");
     const [url, setUrl] = useState<string>("");
     const [tags, setTags] = useState<string[]>([]);

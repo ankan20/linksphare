@@ -12,7 +12,7 @@ import {
         <AccordionItem value="item-1">
           <AccordionTrigger>How do I add links to my project?</AccordionTrigger>
           <AccordionContent>
-          To add links, simply head over to the project details page and click on the "Add Links" section. From there, you can easily add the URLs and organize them with relevant tags!          </AccordionContent>
+          To add links, simply head over to the project details page and click on the &quot;Add Links&quot; section. From there, you can easily add the URLs and organize them with relevant tags!</AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-2">
           <AccordionTrigger>Can I see detailed stats about my links?</AccordionTrigger>
