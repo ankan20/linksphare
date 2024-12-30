@@ -2,7 +2,7 @@
 import ProjectDetailsCard from "@/components/ProjectDetailsCard"
 import { useParams } from "next/navigation";
 
-const page:React.FC = () => {
+const Page = () => {
    const params = useParams();
     const { id } =params ;
   return (
@@ -12,4 +12,4 @@ const page:React.FC = () => {
   )
 }
 
-export default page
+export default Page

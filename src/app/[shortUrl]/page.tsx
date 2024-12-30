@@ -1,7 +1,7 @@
 import AdPage from "@/components/AdPage";
 import prisma from "@/lib/prisma";
 
-export default async function ShortUrlRedirect({ params }: { params: { shortUrl: string } }) {
+export default async function ShortUrlRedirect({ params }: { params: { shortUrl: any } }) {
     const { shortUrl } = await params;
 
     const link = await prisma.link.findUnique({

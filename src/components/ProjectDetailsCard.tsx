@@ -35,10 +35,10 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
       const response = await axios.get(`/api/projects/${projectId}`);
       setProject(response.data.project);
       setLinks(response.data.links);
-    } catch (error) {
+    } catch (error:any) {
       toast({
         title: "Error",
-        description: "Failed to load project details",
+        description:error.response.data.error || "Failed to load project details",
         variant: "destructive",
       });
     } finally {
@@ -62,10 +62,10 @@ const ProjectDetailsCard = ({ id }: { id: any }) => {
         description: "Link deleted successfully!",
         variant: "success",
       });
-    } catch (error) {
+    } catch (error:any) {
       toast({
         title: "Error",
-        description: "Failed to delete link",
+        description:error.response.data.error || "Failed to delete link",
         variant: "destructive",
       });
     }
