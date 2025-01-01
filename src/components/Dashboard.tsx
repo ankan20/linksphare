@@ -168,7 +168,7 @@ const Dashboard = () => {
             <CardTitle>Total Projects</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-4xl font-bold text-gray-900 dark:text-white"><NumberTicker value={totalProjects} /></p>
+            <p className="text-4xl font-bold text-gray-900 dark:text-white"><NumberTicker value={totalProjects} />{totalProjects ===0 && 0}</p>
           </CardContent>
         </Card>
 
@@ -177,7 +177,7 @@ const Dashboard = () => {
             <CardTitle>Completed Projects</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-4xl font-bold text-gray-900 dark:text-white"><NumberTicker value={doneProjects} /></p>
+            <p className="text-4xl font-bold text-gray-900 dark:text-white"><NumberTicker value={doneProjects} />{doneProjects ===0 && 0}</p>
           </CardContent>
         </Card>
       </div>
